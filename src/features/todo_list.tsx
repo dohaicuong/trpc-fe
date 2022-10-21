@@ -1,33 +1,42 @@
 import { Todo } from 'go1-rpc_todo'
-import { useQueryClient } from 'react-query'
 import { trpc } from '../providers/TodoRouterProvider'
+import { Fragment } from 'react'
+import { removeItem } from '../utils/react-query'
 
 export const TodoList = () => {
-  const { data: todos } = trpc.useQuery(['todo.list', {}])
+  const { data: todoList } = trpc.useInfiniteQuery(
+    ['todo.list', { limit: 10 }],
+    {
+      getNextPageParam: lastPage => lastPage.nextCursor
+    }
+  )
 
   return (
     <ul>
-      {todos?.map(todo => (
-        <TodoListItem key={todo.id} todo={todo} />
+      {todoList?.pages.map((page, i) => (
+        <Fragment key={i}>
+          {page.items.map(item => (
+            <TodoListItem key={item.id} todo={item} />
+          ))}
+        </Fragment>
       ))}
     </ul>
   )
 }
 
 export const TodoListItem = ({ todo }: { todo: Todo }) => {
-  const queryClient = useQueryClient()
-  const todoDelete = trpc.useMutation('todo.delete')
+  const utils = trpc.useContext()
+  const todoDelete = trpc.useMutation('todo.delete', {
+    onSuccess: ({ id }) => {
+      utils.setInfiniteQueryData(
+        ['todo.list', { limit: 10 }],
+        data => removeItem(id, data)
+      )
+    }
+  })
+
   const onDelete = () => {
-    todoDelete.mutate(
-      {
-        id: todo.id,
-      },
-      {
-        onSuccess: ({ id }) => {
-          queryClient.setQueryData<Todo[]>(['todo.list', {}], todos => todos?.filter(todo => todo.id !== id) || [])
-        }
-      }
-    )
+    todoDelete.mutate({ id: todo.id })
   }
 
   return (

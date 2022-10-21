@@ -1,20 +1,25 @@
 import { useForm } from 'react-hook-form'
-import { useQueryClient } from 'react-query'
 import { trpc } from '../providers/TodoRouterProvider'
-import { Todo, TodoCreateInput } from 'go1-rpc_todo'
+import { TodoCreateInput } from 'go1-rpc_todo'
+import { appendData } from '../utils/react-query'
 
 export const TodoCreateForm = () => {
-  const queryClient = useQueryClient()
-  const todoCreate = trpc.useMutation(['todo.create'])
-
   const { handleSubmit, register, reset } = useForm<TodoCreateInput>()
+
+  const utils = trpc.useContext()
+  const todoCreate = trpc.useMutation(['todo.create'], {
+    onSuccess: todo => {
+      utils.setInfiniteQueryData(
+        ['todo.list', { limit: 10 }],
+        data => appendData(todo, data)
+      )
+
+      reset()
+    }
+  })
+  
   const onSubmit = (data: TodoCreateInput) => {
-    todoCreate.mutate(data, {
-      onSuccess: todo => {
-        queryClient.setQueryData<Todo[]>(['todo.list', {}], todos => ([...(todos || []), todo]))
-        reset()
-      }
-    })
+    todoCreate.mutate(data)
   }
 
   return (

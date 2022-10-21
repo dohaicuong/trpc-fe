@@ -12,10 +12,9 @@ const queryClient = new QueryClient({
   }
 })
 
-// http://localhost:4000/trpc
-// https://api.dev.go1.cloud/go1_rpc-todo/trpc
 const trpcClient = trpc.createClient({
-  url: 'https://api.dev.go1.cloud/go1_rpc-todo/trpc',
+  url: 'http://localhost:4000/trpc',
+  // url: 'https://api.dev.go1.cloud/go1_rpc-todo/trpc',
 })
 
 type TodoRouterProviderProps = {
