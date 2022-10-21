@@ -9,7 +9,10 @@ type QueryPayload<ITEM> = {
   items: ITEM[]
 }
 
-export function appendData<ITEM, PAGE extends QueryPayload<ITEM>>(newItem: ITEM, infiniteData?: InfiniteData<PAGE>): InfiniteData<PAGE> {
+export function appendData<ITEM, PAGE extends QueryPayload<ITEM>>(
+  newItem: ITEM,
+  infiniteData?: InfiniteData<PAGE>
+): InfiniteData<PAGE> {
   if (!infiniteData) return { pageParams: [], pages: [] }
 
   let firstPage = infiniteData.pages[0]
@@ -18,7 +21,10 @@ export function appendData<ITEM, PAGE extends QueryPayload<ITEM>>(newItem: ITEM,
   return infiniteData
 }
 
-export function prependData<ITEM, PAGE extends QueryPayload<ITEM>>(newItem: ITEM, infiniteData?: InfiniteData<PAGE>): InfiniteData<PAGE> {
+export function prependData<ITEM, PAGE extends QueryPayload<ITEM>>(
+  newItem: ITEM,
+  infiniteData?: InfiniteData<PAGE>
+): InfiniteData<PAGE> {
   if (!infiniteData) return { pageParams: [], pages: [] }
 
   let lastPage = infiniteData.pages[infiniteData.pages.length - 1]
@@ -35,6 +41,7 @@ export function removeItem<ITEM extends Node, PAGE extends QueryPayload<ITEM>>(
 
   return {
     pageParams: infiniteData.pageParams,
+    // @ts-ignore
     pages: infiniteData.pages.map(page => ({
       nextCursor: page.nextCursor,
       items: page.items.filter(item => item.id !== itemId)
