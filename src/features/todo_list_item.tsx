@@ -6,7 +6,11 @@ import { inferProcedureOutput } from '@trpc/server'
 type TodoListPayload = inferProcedureOutput<typeof todoRouter['todo_list']>
 type TodoListItem = TodoListPayload['items'][0]
 
-export const TodoListItem = ({ todo }: { todo: TodoListItem }) => {
+type TodoListItemProps = {
+  todo: TodoListItem
+}
+
+export const TodoListItem: React.FC<TodoListItemProps> = ({ todo }) => {
   const utils = trpc.useContext()
   const todoDelete = trpc.todo_delete.useMutation({
     onSuccess: ({ id }) => {
