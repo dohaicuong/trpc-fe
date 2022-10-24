@@ -1,7 +1,10 @@
 import { useForm } from 'react-hook-form'
 import { trpc } from '../providers/TodoRouterProvider'
-import { TodoCreateInput } from 'go1-rpc_todo'
+import { todoRouter } from 'go1-rpc_todo'
 import { appendData } from '../utils/react-query'
+import { inferProcedureInput } from '@trpc/server'
+
+type TodoCreateInput = inferProcedureInput<typeof todoRouter['todo_create']>
 
 export const TodoCreateForm = () => {
   const { handleSubmit, register, reset } = useForm<TodoCreateInput>()

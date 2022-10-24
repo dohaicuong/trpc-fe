@@ -1,7 +1,6 @@
-import { Todo } from 'go1-rpc_todo'
-import { trpc } from '../providers/TodoRouterProvider'
 import { Fragment } from 'react'
-import { removeItem } from '../utils/react-query'
+import { trpc } from '../providers/TodoRouterProvider'
+import { TodoListItem } from './todo_list_item'
 
 export const TodoList = () => {
   const { data: todoList } = trpc.todo_list.useInfiniteQuery(
@@ -19,35 +18,5 @@ export const TodoList = () => {
         </Fragment>
       ))}
     </ul>
-  )
-}
-
-export const TodoListItem = ({ todo }: { todo: Todo }) => {
-  const utils = trpc.useContext()
-  const todoDelete = trpc.todo_delete.useMutation({
-    onSuccess: ({ id }) => {
-      utils.todo_list.setInfiniteData(
-        data => {
-          const newData = removeItem(id, data)
-          console.log(newData)
-          return newData
-        },
-        { limit: 10 }
-      )
-    }
-  })
-
-  const onDelete = () => {
-    todoDelete.mutate({ id: todo.id })
-  }
-
-  return (
-    <li>
-      <button onClick={onDelete}>
-        x
-      </button>
-      {' '}
-      {todo.title}
-    </li>
   )
 }

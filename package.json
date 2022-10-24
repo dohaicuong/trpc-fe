@@ -13,7 +13,7 @@
     "@trpc/client": "10.0.0-proxy-beta.26",
     "@trpc/react-query": "10.0.0-proxy-beta.26",
     "@trpc/server": "10.0.0-proxy-beta.26",
-    "go1-rpc_todo": "^1.4.0",
+    "go1-rpc_todo": "^1.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
