@@ -4,11 +4,9 @@ import { Fragment } from 'react'
 import { removeItem } from '../utils/react-query'
 
 export const TodoList = () => {
-  const { data: todoList } = trpc.useInfiniteQuery(
-    ['todo.list', { limit: 10 }],
-    {
-      getNextPageParam: lastPage => lastPage.nextCursor
-    }
+  const { data: todoList } = trpc.todo_list.useInfiniteQuery(
+    { limit: 10 },
+    { getNextPageParam: lastPage => lastPage.nextCursor }
   )
 
   return (
@@ -26,11 +24,15 @@ export const TodoList = () => {
 
 export const TodoListItem = ({ todo }: { todo: Todo }) => {
   const utils = trpc.useContext()
-  const todoDelete = trpc.useMutation('todo.delete', {
+  const todoDelete = trpc.todo_delete.useMutation({
     onSuccess: ({ id }) => {
-      utils.setInfiniteQueryData(
-        ['todo.list', { limit: 10 }],
-        data => removeItem(id, data)
+      utils.todo_list.setInfiniteData(
+        data => {
+          const newData = removeItem(id, data)
+          console.log(newData)
+          return newData
+        },
+        { limit: 10 }
       )
     }
   })

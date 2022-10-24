@@ -7,13 +7,17 @@ export const TodoCreateForm = () => {
   const { handleSubmit, register, reset } = useForm<TodoCreateInput>()
 
   const utils = trpc.useContext()
-  const todoCreate = trpc.useMutation(['todo.create'], {
+  const todoCreate = trpc.todo_create.useMutation({
     onSuccess: todo => {
-      utils.setInfiniteQueryData(
-        ['todo.list', { limit: 10 }],
-        data => appendData(todo, data)
+      utils.todo_list.setInfiniteData(
+        data => {
+          const newData = appendData(todo, data)
+          console.log(newData)
+          return newData
+        },
+        { limit: 10 }
       )
-
+      utils.todo_list.invalidate()
       reset()
     }
   })

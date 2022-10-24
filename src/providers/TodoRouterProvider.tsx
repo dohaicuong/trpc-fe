@@ -1,8 +1,8 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { createReactQueryHooks } from '@trpc/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createTRPCReact, httpLink } from '@trpc/react-query'
 import type { TodoRouter } from 'go1-rpc_todo'
 
-export const trpc = createReactQueryHooks<TodoRouter>()
+export const trpc = createTRPCReact<TodoRouter>()
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,8 +13,12 @@ const queryClient = new QueryClient({
 })
 
 const trpcClient = trpc.createClient({
-  url: 'http://localhost:4000/trpc',
-  // url: 'https://api.dev.go1.cloud/go1_rpc-todo/trpc',
+  links: [
+    httpLink({
+      // url: 'http://localhost:4000/trpc',
+      url: 'https://api.dev.go1.cloud/go1_rpc-todo/trpc',
+    })
+  ]
 })
 
 type TodoRouterProviderProps = {
